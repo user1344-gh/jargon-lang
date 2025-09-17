@@ -1,7 +1,7 @@
 import lexer
 import sys
 
-lexer_ = lexer.Lexer("12.34")
+lexer_ = lexer.Lexer(" ".join(sys.argv[1:]))
 lexer_res = lexer_.lex_text()
 
 if lexer_res[1]:
