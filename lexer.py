@@ -14,10 +14,10 @@ class Lexer:
 
     def advance(self):
         "Advances to the next character then returns it. Returns EOF if there are no characters left"
-        if self.pos.index >= len(self.text) -1:
+        self.pos.increment()
+        if self.pos.index >= len(self.text):
             self.current_char = "\x1a" 
         else:
-            self.pos.increment()
             if self.current_char == "\n":
                 self.pos.newline()
             self.current_char = self.text[self.pos.index]
