@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jargon-lang"
-version = "0.2.1"
+version = "0.3.0"
 description = "A simple programming language."
 authors = ["user1344-gh"]
 license = "MIT"
