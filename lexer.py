@@ -47,6 +47,18 @@ class Lexer:
         elif self.current_char in " \n\t":
             self.advance()
             return Result(None)
+        elif self.current_char == "+":
+            self.advance()
+            return Result(Token(TokenType.PLUS, None, pos_start, pos_start + 1))
+        elif self.current_char == "-":
+            self.advance()
+            return Result(Token(TokenType.MINUS, None, pos_start, pos_start + 1))
+        elif self.current_char == "*":
+            self.advance()
+            return Result(Token(TokenType.ASTRISK, None, pos_start, pos_start + 1))
+        elif self.current_char == "/":
+            self.advance()
+            return Result(Token(TokenType.SLASH, None, pos_start, pos_start + 1))
         return Result(None, Error(f"Invalid character: {current_char!r}", pos_start, copy(self.pos)+1))
     
     def gen_number(self) -> Result:
