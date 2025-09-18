@@ -42,7 +42,7 @@ class Lexer:
         pos_start = copy(self.pos)
         if self.current_char == "\x1a":
             return Result(Token(TokenType.EOF, None, pos_start, pos_start + 1))
-        elif self.current_char in "0123456789":
+        elif self.current_char in "0123456789.":
             return self.gen_number()
         elif self.current_char in " \n\t":
             self.advance()
@@ -59,12 +59,22 @@ class Lexer:
         elif self.current_char == "/":
             self.advance()
             return Result(Token(TokenType.SLASH, None, pos_start, pos_start + 1))
-        return Result(None, Error(f"Invalid character: {current_char!r}", pos_start, copy(self.pos)+1))
+        return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, copy(self.pos)+1))
     
     def gen_number(self) -> Result:
-        num_str = self.current_char
+        num_str = ""
         pos_start = copy(self.pos)
-        while self.advance() in "0123456789":
+        token_type: TokenType = TokenType.INT
+        contains_decimal_point = False
+        while self.current_char in "0123456789.":
+            if self.current_char == ".":
+                if contains_decimal_point:
+                    break
+                contains_decimal_point = True
+                token_type = TokenType.FLOAT
             num_str += self.current_char
-        return Result(Token(TokenType.INT, int(num_str), pos_start, copy(self.pos)))
+            self.advance()
+        if num_str == ".":
+            num_str = "0.0"
+        return Result(Token(token_type, num_str, pos_start, copy(self.pos)))
     
