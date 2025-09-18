@@ -47,7 +47,7 @@ class Lexer:
         elif self.current_char in " \n\t":
             self.advance()
             return Result(None)
-        return Result(None, Error(f"Invalid character: {current_char!r}", pos_start, copy(self.pos)))
+        return Result(None, Error(f"Invalid character: {current_char!r}", pos_start, copy(self.pos)+1))
     
     def gen_number(self) -> Result:
         num_str = self.current_char

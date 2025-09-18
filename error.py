@@ -12,9 +12,18 @@ class LexerError:
     def __str__(self):
         return f"Error: {self.value}"
     
-    def display(self, text) -> str:
+    def display(self, text: str) -> str:
         disp_text: str = (
             f"Error at line {self.pos_start.line}, col {self.pos_start.col}:\n"
-            + self.value
+            f"{self.value}\n"
         )
+        line_text = text.split()[self.pos_start.line]
+        disp_text += line_text
+        disp_text += "\n"
+        disp_text += " " * self.pos_start.col
+        if self.pos_start.line == self.pos_end.line:
+            disp_text += "^" * (self.pos_end.col - self.pos_start.col)
+        else:
+            disp_text += "^" * (self.pos_end.col - len(line_text) - 1)
+
         return disp_text
