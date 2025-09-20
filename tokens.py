@@ -3,7 +3,7 @@ from typing import Any
 from pos import Position
 
 TokenType = Enum("TokenType", [
-    "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTRISK", "SLASH"
+    "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTERISK", "SLASH"
 ])
 
 class Token:

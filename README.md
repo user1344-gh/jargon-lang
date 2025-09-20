@@ -1,5 +1,8 @@
 # JargonLang
-Version 0.4
+Version 0.5
 
 to use, write your code as a command line argument.\
-Currently only contains the lexer.
+Contains a lexer and a parser. \
+
+Values: int, float\
+Operations: add, subtract

@@ -2,7 +2,7 @@ from tokens import Token, TokenType
 from result import LexerResult as Result
 from pos import Position
 from copy import copy
-from error import LexerError as Error
+from error import Error
 
 class Lexer:
     def __init__(self, text: str):
@@ -55,7 +55,7 @@ class Lexer:
             return Result(Token(TokenType.MINUS, None, pos_start, pos_start + 1))
         elif self.current_char == "*":
             self.advance()
-            return Result(Token(TokenType.ASTRISK, None, pos_start, pos_start + 1))
+            return Result(Token(TokenType.ASTERISK, None, pos_start, pos_start + 1))
         elif self.current_char == "/":
             self.advance()
             return Result(Token(TokenType.SLASH, None, pos_start, pos_start + 1))

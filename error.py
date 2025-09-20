@@ -1,6 +1,6 @@
 import pos
 
-class LexerError:
+class Error:
     def __init__(self, value: str, pos_start: pos.Position, pos_end: pos.Position):
         self.value = value
         self.pos_start = pos_start
@@ -17,7 +17,7 @@ class LexerError:
             f"Error at line {self.pos_start.line}, col {self.pos_start.col}:\n"
             f"{self.value}\n"
         )
-        line_text = text.split()[self.pos_start.line]
+        line_text = text.split("\n")[self.pos_start.line]
         disp_text += line_text
         disp_text += "\n"
         disp_text += " " * self.pos_start.col
