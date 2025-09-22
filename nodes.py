@@ -38,3 +38,14 @@ class BinaryOpNode:
     
     def __repr__(self):
         return f"({self.left} {self.operator.name} {self.right})"
+
+class UnaryOpNode:
+    "Used for unary operations"
+    def __init__(self, operator: operators.Operator, value: Node, pos_start: pos.Position):
+        self.value = value
+        self.operator = operator
+        self.pos_start = pos_start
+        self.pos_end = value.pos_end
+    
+    def __repr__(self):
+        return f"({self.operator.name} {self.value})"

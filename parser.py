@@ -38,8 +38,20 @@ class Parser:
         )
     def parse_term(self) -> Result:
         return self.parse_binary_operation(
-            self.parse_atom, [TokenType.ASTERISK, TokenType.SLASH], [Operator.MUL, Operator.DIV]
+            self.parse_factor, [TokenType.ASTERISK, TokenType.SLASH], [Operator.MUL, Operator.DIV]
         )
+    def parse_factor(self) -> Result:
+        res = Result()
+        
+        if self.current_token.token_type == TokenType.MINUS:
+            op_token = self.current_token
+            self.advance()
+            value = res.process(self.parse_factor())
+            if res.err:
+                return res
+            return res.success(n.UnaryOpNode(Operator.NEG, value.get_success(), self.current_token.pos_start))
+        
+        return self.parse_atom()
     def parse_atom(self) -> Result:
         res = Result()
         

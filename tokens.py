@@ -16,5 +16,5 @@ class Token:
         string_repr: str = f"[{self.token_type.name}"
         if self.value:
             string_repr += f":{self.value}"
-        string_repr += f"{self.pos_start}-{self.pos_end}]"
+        string_repr += "]"
         return string_repr
