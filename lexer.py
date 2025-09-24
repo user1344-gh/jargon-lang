@@ -49,17 +49,23 @@ class Lexer:
             return Result(None)
         elif self.current_char == "+":
             self.advance()
-            return Result(Token(TokenType.PLUS, None, pos_start, pos_start + 1))
+            return Result(Token(TokenType.PLUS, None, pos_start, copy(self.pos)))
         elif self.current_char == "-":
             self.advance()
-            return Result(Token(TokenType.MINUS, None, pos_start, pos_start + 1))
+            return Result(Token(TokenType.MINUS, None, pos_start, copy(self.pos)))
         elif self.current_char == "*":
             self.advance()
-            return Result(Token(TokenType.ASTERISK, None, pos_start, pos_start + 1))
+            return Result(Token(TokenType.ASTERISK, None, pos_start, copy(self.pos)))
         elif self.current_char == "/":
             self.advance()
-            return Result(Token(TokenType.SLASH, None, pos_start, pos_start + 1))
-        return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, copy(self.pos)+1))
+            return Result(Token(TokenType.SLASH, None, pos_start, copy(self.pos)))
+        elif self.current_char == "(":
+            self.advance()
+            return Result(Token(TokenType.L_PAREN, None, pos_start, copy(self.pos)))
+        elif self.current_char == ")":
+            self.advance()
+            return Result(Token(TokenType.R_PAREN, None, pos_start, copy(self.pos)))
+        return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))
     
     def gen_number(self) -> Result:
         num_str = ""

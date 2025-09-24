@@ -59,6 +59,15 @@ class Parser:
             res = res.success(n.IntNode(self.current_token))
             self.advance()
             return res
+        elif self.current_token.token_type == TokenType.L_PAREN:
+            self.advance()
+            expr = res.process(self.parse_expression())
+            if res.err:
+                return res
+            if self.current_token.token_type != TokenType.R_PAREN:
+                return res.error(Error("Expected ')'", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+            return expr
         return res.error(Error("Unexpected token", self.current_token.pos_start, self.current_token.pos_end))
     ####
     def parse_binary_operation(self, left_func: Callable, operator_tokentypes: list[TokenType], operators: list[Operator]) -> Result:
