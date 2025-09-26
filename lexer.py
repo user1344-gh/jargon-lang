@@ -116,7 +116,7 @@ class Lexer:
             self.advance()
     def multiline_comment(self):
         while True:
-            if self.current_char == "*" and self.advance() == "/" or self.current_char == "\x1a":
+            if self.current_char == "*" and self.advance() == "/" or self.current_char == "\x1b":
                 break
             self.advance()
         self.advance()
