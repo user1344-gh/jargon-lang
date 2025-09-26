@@ -65,6 +65,8 @@ class Lexer:
         elif self.current_char == ")":
             self.advance()
             return Result(Token(TokenType.R_PAREN, None, pos_start, copy(self.pos)))
+        elif self.current_char == '"':
+            return self.gen_string()
         return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))
     
     def gen_number(self) -> Result:
@@ -84,3 +86,21 @@ class Lexer:
             num_str = "0.0"
         return Result(Token(token_type, num_str, pos_start, copy(self.pos)))
     
+    def gen_string(self) -> Result:
+        string = ""
+        pos_start = copy(self.pos)
+        escape = False
+        while True:
+            self.advance()
+            if self.current_char == '"' and not escape:
+                break
+            if self.current_char == "\\" and not escape:
+                escape = True
+            else:
+                escape = False
+            if self.current_char == "\x1a":
+                return Result(None, Error("Unterminated string literal, expected '\"'", pos_start, copy(self.pos)))
+            string += self.current_char
+        pos_end = copy(self.pos)
+        self.advance()
+        return Result(Token(TokenType.STR, string, pos_start, pos_end))

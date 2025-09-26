@@ -3,7 +3,8 @@ from typing import Any
 from pos import Position
 
 TokenType = Enum("TokenType", [
-    "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTERISK", "SLASH", "L_PAREN", "R_PAREN"
+    "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTERISK", "SLASH", "L_PAREN", "R_PAREN",
+    "STR",
 ])
 
 class Token:
@@ -15,6 +16,6 @@ class Token:
     def __repr__(self):
         string_repr: str = f"[{self.token_type.name}"
         if self.value:
-            string_repr += f":{self.value}"
+            string_repr += f":{self.value!r}"
         string_repr += "]"
         return string_repr

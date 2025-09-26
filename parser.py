@@ -20,6 +20,8 @@ class Parser:
         return self.current_token
 
     def parse(self) -> Result:
+        if len(self.tokens) == 1:
+            return Result()
         output = self.parse_expression()
         if output.err:
             return output
@@ -57,6 +59,14 @@ class Parser:
         
         if self.current_token.token_type == TokenType.INT:
             res = res.success(n.IntNode(self.current_token))
+            self.advance()
+            return res
+        elif self.current_token.token_type == TokenType.FLOAT:
+            res = res.success(n.FloatNode(self.current_token))
+            self.advance()
+            return res
+        elif self.current_token.token_type == TokenType.STR:
+            res = res.success(n.StringNode(self.current_token))
             self.advance()
             return res
         elif self.current_token.token_type == TokenType.L_PAREN:

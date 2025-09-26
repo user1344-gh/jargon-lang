@@ -16,16 +16,25 @@ class IntNode:
         self.value = token.value
 
     def __repr__(self):
-        return f"(IntNode({self.value}))"
+        return f"({type(self).__name__}({self.value}))"
 
 class FloatNode:
-    def __init__(self, value: str, pos_start: pos.Position, pos_end: pos.Position):
-        self.pos_start = pos_start
-        self.pos_end = pos_end
-        self.value = value
+    def __init__(self, token: tokens.Token):
+        self.pos_start = token.pos_start
+        self.pos_end = token.pos_end
+        self.value = token.value
 
     def __repr__(self):
-        return f"(FloatNode({self.value}))"
+        return f"({type(self).__name__}({self.value}))"
+
+class StringNode:
+    def __init__(self, token: tokens.Token):
+        self.pos_start = token.pos_start
+        self.pos_end = token.pos_end
+        self.value = token.value
+
+    def __repr__(self):
+        return f"({type(self).__name__}({self.value}))"
 
 class BinaryOpNode:
     "Used for binary operations"
