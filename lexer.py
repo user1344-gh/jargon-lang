@@ -58,6 +58,12 @@ class Lexer:
             return Result(Token(TokenType.ASTERISK, None, pos_start, copy(self.pos)))
         elif self.current_char == "/":
             self.advance()
+            if self.current_char == "/":
+                self.comment()
+                return Result(None)
+            elif self.current_char == "*":
+                self.multiline_comment()
+                return Result(None)
             return Result(Token(TokenType.SLASH, None, pos_start, copy(self.pos)))
         elif self.current_char == "(":
             self.advance()
@@ -104,3 +110,13 @@ class Lexer:
         pos_end = copy(self.pos)
         self.advance()
         return Result(Token(TokenType.STR, string, pos_start, pos_end))
+
+    def comment(self):
+        while self.current_char not in "\n\x1a":
+            self.advance()
+    def multiline_comment(self):
+        while True:
+            if self.current_char == "*" and self.advance() == "/" or self.current_char == "\x1a":
+                break
+            self.advance()
+        self.advance()
