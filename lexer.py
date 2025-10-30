@@ -73,6 +73,14 @@ class Lexer:
             return Result(Token(TokenType.R_PAREN, None, pos_start, copy(self.pos)))
         elif self.current_char == '"':
             return self.gen_string()
+        elif self.current_char == "'":
+            self.advance()
+            char = self.current_char
+            self.advance()
+            if self.current_char != "'":
+                return Result(None, Error(f"Expected \"'\"", pos_start, self.pos+1))
+            self.advance()
+            return Result(Token(TokenType.CHAR, char, pos_start, copy(self.pos)))
         return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))
     
     def gen_number(self) -> Result:

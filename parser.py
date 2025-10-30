@@ -69,6 +69,10 @@ class Parser:
             res = res.success(n.StringNode(self.current_token))
             self.advance()
             return res
+        elif self.current_token.token_type == TokenType.CHAR:
+            res = res.success(n.CharNode(self.current_token))
+            self.advance()
+            return res
         elif self.current_token.token_type == TokenType.L_PAREN:
             self.advance()
             expr = res.process(self.parse_expression())

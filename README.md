@@ -1,10 +1,10 @@
 # JargonLang
-Version 0.9
+Version 0.10
 
 to use, write your code as a command line argument.\
 Contains a lexer and a parser.
 
-Values: int, float, str
+Values: int, float, str, char
 # Operations: 
 ## Addition `a+b`
 Adds `a` and `b`
