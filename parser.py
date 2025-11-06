@@ -33,7 +33,13 @@ class Parser:
     # PARSING
 
     def parse_expression(self) -> Result:
-        return self.parse_arithmetic()
+        return self.parse_comparison()
+    def parse_comparison(self) -> Result:
+        return self.parse_binary_operation(
+            self.parse_arithmetic,
+            [TokenType.EQEQ, TokenType.GT, TokenType.LT, TokenType.GE, TokenType.LE],
+            [Operator.EQ, Operator.GT, Operator.LT, Operator.GE, Operator.LE]
+        )
     def parse_arithmetic(self) -> Result:
         return self.parse_binary_operation(
             self.parse_term, [TokenType.PLUS, TokenType.MINUS], [Operator.ADD, Operator.SUB]

@@ -81,6 +81,13 @@ class Lexer:
                 return Result(None, Error(f"Expected \"'\"", pos_start, self.pos+1))
             self.advance()
             return Result(Token(TokenType.CHAR, char, pos_start, copy(self.pos)))
+        elif self.current_char == "=":
+            self.advance()
+            if self.current_char == "=":
+                self.advance()
+                return Result(Token(TokenType.EQEQ, None, pos_start, copy(self.pos)))
+        elif self.current_char in "<>":
+            return self.gen_comparison()
         return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))
     
     def gen_number(self) -> Result:
@@ -118,6 +125,17 @@ class Lexer:
         pos_end = copy(self.pos)
         self.advance()
         return Result(Token(TokenType.STR, string, pos_start, pos_end))
+
+    def gen_comparison(self) -> Result:
+        pos_start = copy(self.pos)
+        comp = self.current_char
+        self.advance()
+        pos_end = copy(self.pos)
+        if self.current_char == "=":
+            self.advance()
+            return Result(Token(TokenType.GE if comp == ">" else TokenType.LE, None, pos_start, pos_end))
+        self.advance()
+        return Result(Token(TokenType.GT if comp == ">" else TokenType.LT, None, pos_start, pos_end))
 
     def comment(self):
         while self.current_char not in "\n\x1a":
