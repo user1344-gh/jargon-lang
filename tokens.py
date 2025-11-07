@@ -4,7 +4,8 @@ from pos import Position
 
 TokenType = Enum("TokenType", [
     "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTERISK", "SLASH", "L_PAREN", "R_PAREN",
-    "STR", "CHAR", "GT", "GE", "LT", "LE", "EQEQ", "NOTEQ"
+    "STR", "CHAR", "GT", "GE", "LT", "LE", "EQEQ", "NOTEQ", "PIPE", "PIPEPIPE", "AND",
+    "ANDAND", "CARET", "EXCLAMATION", "TILDE"
 ])
 
 class Token:

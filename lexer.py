@@ -86,6 +86,30 @@ class Lexer:
             if self.current_char == "=":
                 self.advance()
                 return Result(Token(TokenType.EQEQ, None, pos_start, copy(self.pos)))
+        elif self.current_char == "^":
+            self.advance()
+            return Result(Token(TokenType.CARET, None, pos_start, copy(self.pos)))
+        elif self.current_char == "&":
+            self.advance()
+            if self.current_char == "&":
+                self.advance()
+                return Result(Token(TokenType.ANDAND, None, pos_start, copy(self.pos)))
+            return Result(Token(TokenType.AND, None, pos_start, copy(self.pos)))
+        elif self.current_char == "|":
+            self.advance()
+            if self.current_char == "|":
+                self.advance()
+                return Result(Token(TokenType.PIPEPIPE, None, pos_start, copy(self.pos)))
+            return Result(Token(TokenType.PIPE, None, pos_start, copy(self.pos)))
+        elif self.current_char == "!":
+            self.advance()
+            if self.current_char == "=":
+                self.advance()
+                return Result(Token(TokenType.NOTEQ, None, pos_start, copy(self.pos)))
+            return Result(Token(TokenType.EXCLAMATION, None, pos_start, copy(self.pos)))
+        elif self.current_char == "~":
+            self.advance()
+            return Result(Token(TokenType.TILDE, None, pos_start, copy(self.pos)))
         elif self.current_char in "<>":
             return self.gen_comparison()
         return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))

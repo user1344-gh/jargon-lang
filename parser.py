@@ -33,16 +33,34 @@ class Parser:
     # PARSING
 
     def parse_expression(self) -> Result:
-        return self.parse_comparison()
+        return self.parse_equality_expr()
+    def parse_equality_expr(self) -> Result:
+        return self.parse_binary_operation(
+            self.parse_logical,
+            [TokenType.EQEQ, TokenType.NOTEQ],
+            [Operator.EQ, Operator.NOT_EQ]
+        )
+    def parse_logical(self) -> Result:
+        return self.parse_binary_operation(
+            self.parse_comparison,
+            [TokenType.ANDAND, TokenType.PIPEPIPE],
+            [Operator.LOGIC_AND, Operator.LOGIC_OR]
+        )
     def parse_comparison(self) -> Result:
         return self.parse_binary_operation(
             self.parse_arithmetic,
-            [TokenType.EQEQ, TokenType.GT, TokenType.LT, TokenType.GE, TokenType.LE],
-            [Operator.EQ, Operator.GT, Operator.LT, Operator.GE, Operator.LE]
+            [TokenType.LT, TokenType.GE, TokenType.LE],
+            [Operator.LT, Operator.GE, Operator.LE]
         )
     def parse_arithmetic(self) -> Result:
         return self.parse_binary_operation(
-            self.parse_term, [TokenType.PLUS, TokenType.MINUS], [Operator.ADD, Operator.SUB]
+            self.parse_bitwise, [TokenType.PLUS, TokenType.MINUS], [Operator.ADD, Operator.SUB]
+        )
+    def parse_bitwise(self) -> Result:
+        return self.parse_binary_operation(
+            self.parse_term,
+            [TokenType.AND, TokenType.PIPE, TokenType.CARET],
+            [Operator.AND, Operator.OR, Operator.XOR]
         )
     def parse_term(self) -> Result:
         return self.parse_binary_operation(
@@ -51,13 +69,17 @@ class Parser:
     def parse_factor(self) -> Result:
         res = Result()
         
-        if self.current_token.token_type == TokenType.MINUS:
+        if self.current_token.token_type in (TokenType.MINUS, TokenType.TILDE, TokenType.EXCLAMATION):
             op_token = self.current_token
             self.advance()
             value = res.process(self.parse_factor())
             if res.err:
                 return res
-            return res.success(n.UnaryOpNode(Operator.NEG, value.get_success(), self.current_token.pos_start))
+            return res.success(n.UnaryOpNode((
+                Operator.LOGIC_NOT if op_token.token_type == TokenType.NOTEQ else
+                Operator.NOT if op_token.token_type == TokenType.TILDE else
+                Operator.NEG
+            ), value.get_success(), self.current_token.pos_start))
         
         return self.parse_atom()
     def parse_atom(self) -> Result:
