@@ -3,8 +3,31 @@ from result import LexerResult as Result
 from pos import Position
 from copy import copy
 from error import Error
+from constants import LETTERS, KEYWORDS, TYPES
 
 class Lexer:
+    token_table = {
+        "\x1a": TokenType.EOF,
+        "+": TokenType.PLUS,
+        "-": TokenType.MINUS,
+        "*": TokenType.ASTERISK,
+        "(": TokenType.L_PAREN,
+        ")": TokenType.R_PAREN,
+        "=": TokenType.EQUALS,
+        "==": TokenType.EQEQ,
+        "^": TokenType.CARET,
+        "&": TokenType.AND,
+        "&&": TokenType.ANDAND,
+        "|": TokenType.PIPE,
+        "||": TokenType.PIPEPIPE,
+        "!": TokenType.EXCLAMATION,
+        "~": TokenType.TILDE,
+        ">": TokenType.GT,
+        ">=": TokenType.GE,
+        "<": TokenType.LT,
+        "<=": TokenType.LE,
+        ":": TokenType.COLON,
+    }
     def __init__(self, text: str):
         self.text = text
         self.current_char: str = "\0"
@@ -40,22 +63,19 @@ class Lexer:
         "Generates a token from the current character and advances as necessary."
         current_char = self.current_char
         pos_start = copy(self.pos)
-        if self.current_char == "\x1a":
-            return Result(Token(TokenType.EOF, None, pos_start, pos_start + 1))
+        if self.current_char in self.token_table:
+            char = self.current_char
+            token_type = self.token_table[char]
+            self.advance()
+            if char + self.current_char in self.token_table:
+                token_type = self.token_table[char + self.current_char]
+                self.advance()
+            return Result(Token(token_type, None, pos_start, copy(self.pos)))
         elif self.current_char in "0123456789.":
             return self.gen_number()
         elif self.current_char in " \n\t":
             self.advance()
             return Result(None)
-        elif self.current_char == "+":
-            self.advance()
-            return Result(Token(TokenType.PLUS, None, pos_start, copy(self.pos)))
-        elif self.current_char == "-":
-            self.advance()
-            return Result(Token(TokenType.MINUS, None, pos_start, copy(self.pos)))
-        elif self.current_char == "*":
-            self.advance()
-            return Result(Token(TokenType.ASTERISK, None, pos_start, copy(self.pos)))
         elif self.current_char == "/":
             self.advance()
             if self.current_char == "/":
@@ -65,12 +85,6 @@ class Lexer:
                 self.multiline_comment()
                 return Result(None)
             return Result(Token(TokenType.SLASH, None, pos_start, copy(self.pos)))
-        elif self.current_char == "(":
-            self.advance()
-            return Result(Token(TokenType.L_PAREN, None, pos_start, copy(self.pos)))
-        elif self.current_char == ")":
-            self.advance()
-            return Result(Token(TokenType.R_PAREN, None, pos_start, copy(self.pos)))
         elif self.current_char == '"':
             return self.gen_string()
         elif self.current_char == "'":
@@ -81,37 +95,8 @@ class Lexer:
                 return Result(None, Error(f"Expected \"'\"", pos_start, self.pos+1))
             self.advance()
             return Result(Token(TokenType.CHAR, char, pos_start, copy(self.pos)))
-        elif self.current_char == "=":
-            self.advance()
-            if self.current_char == "=":
-                self.advance()
-                return Result(Token(TokenType.EQEQ, None, pos_start, copy(self.pos)))
-        elif self.current_char == "^":
-            self.advance()
-            return Result(Token(TokenType.CARET, None, pos_start, copy(self.pos)))
-        elif self.current_char == "&":
-            self.advance()
-            if self.current_char == "&":
-                self.advance()
-                return Result(Token(TokenType.ANDAND, None, pos_start, copy(self.pos)))
-            return Result(Token(TokenType.AND, None, pos_start, copy(self.pos)))
-        elif self.current_char == "|":
-            self.advance()
-            if self.current_char == "|":
-                self.advance()
-                return Result(Token(TokenType.PIPEPIPE, None, pos_start, copy(self.pos)))
-            return Result(Token(TokenType.PIPE, None, pos_start, copy(self.pos)))
-        elif self.current_char == "!":
-            self.advance()
-            if self.current_char == "=":
-                self.advance()
-                return Result(Token(TokenType.NOTEQ, None, pos_start, copy(self.pos)))
-            return Result(Token(TokenType.EXCLAMATION, None, pos_start, copy(self.pos)))
-        elif self.current_char == "~":
-            self.advance()
-            return Result(Token(TokenType.TILDE, None, pos_start, copy(self.pos)))
-        elif self.current_char in "<>":
-            return self.gen_comparison()
+        elif self.current_char in LETTERS:
+            return self.gen_ident()
         return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))
     
     def gen_number(self) -> Result:
@@ -150,16 +135,18 @@ class Lexer:
         self.advance()
         return Result(Token(TokenType.STR, string, pos_start, pos_end))
 
-    def gen_comparison(self) -> Result:
+    def gen_ident(self) -> Result:
         pos_start = copy(self.pos)
-        comp = self.current_char
-        self.advance()
-        pos_end = copy(self.pos)
-        if self.current_char == "=":
+        text = ""
+        while self.current_char in LETTERS:
+            text += self.current_char
             self.advance()
-            return Result(Token(TokenType.GE if comp == ">" else TokenType.LE, None, pos_start, pos_end))
-        self.advance()
-        return Result(Token(TokenType.GT if comp == ">" else TokenType.LT, None, pos_start, pos_end))
+        
+        return Result(Token((
+            TokenType.KEYWORD if text in KEYWORDS.values() else
+            TokenType.TYPE if text in TYPES.keys() else
+            TokenType.IDENTIFIER
+        ), text, pos_start, copy(self.pos)))
 
     def comment(self):
         while self.current_char not in "\n\x1a":

@@ -25,6 +25,6 @@ if __name__ == "__main__":
             sys.exit()
         print("PARSER OUTPUT:", parser_res.ok)
     elif cmd == "-v" or cmd == "--version":
-        print("Jargonlang v0.11.0 [251107]")
+        print("Jargonlang v0.13.0 [251110]")
     else:
         print("Invalid command, refer to ./cmdline.md")

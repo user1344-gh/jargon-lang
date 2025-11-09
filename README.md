@@ -1,10 +1,9 @@
 # JargonLang
-Version 0.12.0 (251107)
+Version 0.13.0 (251110)
 
-to use, write your code as a command line argument.\
 Contains a lexer and a parser.
 
-Values: int, float, str, char
+Types: int, float, str, char
 # Operations: 
 ## Addition `a+b`
 Adds `a` and `b`
@@ -20,6 +19,17 @@ Sees if `a` and `b` do not have the same value
 Subtracts `b` from `a`
 ## Negation `-a`
 Returns the additive inverse of `a`
+## Assignment `a=b`
+Assigns the value `b` to variable `a`
+# Keywords
+## `var`
+```
+var x: int = 5
+```
+```
+var x: float
+```
+Used to declare a variable. The type is mandatory, but you dont have to assign a value.
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html
@@ -32,6 +42,7 @@ Ignores text until the end of the line
 Ignores text until the end of the file or `*/`
 # Order of operations
 Highest priority first
+- Assignment (=)
 - Unary operations (-, !, ~)
 - Multiplication and division (*, /)
 - Binary bitwise operations (|, &, ^)
