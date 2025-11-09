@@ -1,7 +1,6 @@
 # JargonLang
 Version 0.12.0 (251107)
 
-to use, write your code as a command line argument.\
 Contains a lexer and a parser.
 
 Values: int, float, str, char
