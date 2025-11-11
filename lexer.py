@@ -27,6 +27,9 @@ class Lexer:
         "<": TokenType.LT,
         "<=": TokenType.LE,
         ":": TokenType.COLON,
+        ";": TokenType.SEMICOLON,
+        "{": TokenType.L_BRACE,
+        "}": TokenType.R_BRACE,
     }
     def __init__(self, text: str):
         self.text = text

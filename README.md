@@ -1,5 +1,7 @@
 # JargonLang
-Version 0.13.0 (251110)
+Version 0.14.0 (2025/11/11)
+
+File extension: .jl
 
 Contains a lexer and a parser.
 
@@ -21,6 +23,8 @@ Subtracts `b` from `a`
 Returns the additive inverse of `a`
 ## Assignment `a=b`
 Assigns the value `b` to variable `a`
+## Code blocks `{}`
+Creates a block of multiple statements separated by semicolons. Required for multiline code as of version 0.14
 # Keywords
 ## `var`
 ```

@@ -10,7 +10,7 @@ class Node:
     def __repr__(self):
         return "(Node)"
     
-class IntNode:
+class IntNode(Node):
     def __init__(self, token: tokens.Token):
         self.pos_start = token.pos_start
         self.pos_end = token.pos_end
@@ -19,7 +19,7 @@ class IntNode:
     def __repr__(self):
         return f"({type(self).__name__}({self.value}))"
 
-class FloatNode:
+class FloatNode(Node):
     def __init__(self, token: tokens.Token):
         self.pos_start = token.pos_start
         self.pos_end = token.pos_end
@@ -28,7 +28,7 @@ class FloatNode:
     def __repr__(self):
         return f"({type(self).__name__}({self.value}))"
 
-class StringNode:
+class StringNode(Node):
     def __init__(self, token: tokens.Token):
         self.pos_start = token.pos_start
         self.pos_end = token.pos_end
@@ -37,7 +37,7 @@ class StringNode:
     def __repr__(self):
         return f"({type(self).__name__}({self.value}))"
 
-class BinaryOpNode:
+class BinaryOpNode(Node):
     "Used for binary operations"
     def __init__(self, left: Node, operator: operators.Operator, right: Node):
         self.left = left
@@ -49,7 +49,7 @@ class BinaryOpNode:
     def __repr__(self):
         return f"({self.left} {self.operator.name} {self.right})"
 
-class UnaryOpNode:
+class UnaryOpNode(Node):
     "Used for unary operations"
     def __init__(self, operator: operators.Operator, value: Node, pos_start: pos.Position):
         self.value = value
@@ -60,7 +60,7 @@ class UnaryOpNode:
     def __repr__(self):
         return f"({self.operator.name} {self.value})"
 
-class CharNode:
+class CharNode(Node):
     def __init__(self, token: tokens.Token):
         self.pos_start = token.pos_start
         self.pos_end = token.pos_end
@@ -69,7 +69,7 @@ class CharNode:
     def __repr__(self):
         return f"({type(self).__name__}({self.value}))"
 
-class VarNode:
+class VarNode(Node):
     def __init__(self, token: tokens.Token):
         self.var_name = token.value
         self.pos_start = token.pos_start
@@ -77,7 +77,7 @@ class VarNode:
     def __repr__(self):
         return f"({self.var_name})"
 
-class VarAssignNode:
+class VarAssignNode(Node):
     def __init__(self, var_name: str, value: Node, pos_start: pos.Position):
         self.var_name = var_name
         self.value = value
@@ -86,7 +86,7 @@ class VarAssignNode:
     def __repr__(self):
         return f"({self.var_name} = {self.value})"
 
-class VarDeclareNode:
+class VarDeclareNode(Node):
     def __init__(self, var_name: str, var_type: types_.Type, value: Node | None, pos_start: pos.Position, pos_end = pos.Position):
         self.var_name = var_name
         self.var_type = var_type
@@ -94,6 +94,14 @@ class VarDeclareNode:
         self.pos_start = pos_start
         self.pos_end = pos_end
     def __repr__(self):
-        return f"(variable {self.var_name}: {self.var_type}" + (
-            f" = {self.value})" if self.value else ")"
+        return f"[variable {self.var_name}: {self.var_type}" + (
+            f" = {self.value}]" if self.value else "]"
         )
+
+class BlockNode(Node):
+    def __init__(self, nodes: list[Node], pos_start: pos.Position, pos_end: pos.Position):
+        self.nodes = nodes
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+    def __repr__(self):
+        return f"(block: {self.nodes})"

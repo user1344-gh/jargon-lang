@@ -6,7 +6,7 @@ TokenType = Enum("TokenType", [
     "EOF", "INT", "FLOAT", "PLUS", "MINUS", "ASTERISK", "SLASH", "L_PAREN", "R_PAREN",
     "STR", "CHAR", "GT", "GE", "LT", "LE", "EQEQ", "NOTEQ", "PIPE", "PIPEPIPE", "AND",
     "ANDAND", "CARET", "EXCLAMATION", "TILDE", "IDENTIFIER", "KEYWORD", "COLON", "EQUALS",
-    "TYPE"
+    "TYPE", "SEMICOLON", "L_BRACE", "R_BRACE",
 ])
 
 class Token:
@@ -22,7 +22,6 @@ class Token:
         string_repr += "]"
         return string_repr
     def match(self, token_type: TokenType, value) -> bool:
-        print(self.token_type == token_type, value == self.value)
         return self.token_type == token_type and value == self.value
     
     def match_keyword(self, keyword: str):

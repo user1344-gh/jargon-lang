@@ -14,7 +14,7 @@ class Error:
     
     def display(self, text: str) -> str:
         disp_text: str = (
-            f"Error at line {self.pos_start.line}, col {self.pos_start.col}:\n"
+            f"Error at line {self.pos_start.line + 1}, col {self.pos_start.col + 1}:\n"
             f"{self.value}\n"
         )
         line_text = text.split("\n")[self.pos_start.line]

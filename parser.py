@@ -23,7 +23,7 @@ class Parser:
     def parse(self) -> Result:
         if len(self.tokens) == 1:
             return Result()
-        output = self.parse_statement()
+        output = self.parse_block()
         if output.err:
             return output
         if self.index < len(self.tokens) - 1:
@@ -32,6 +32,26 @@ class Parser:
     
     # PARSING
     
+    def parse_block(self) -> Result:
+        res = Result()
+        if self.current_token.token_type == TokenType.L_BRACE:
+            nodes = []
+            pos_start = self.current_token.pos_start
+            self.advance()
+            while self.current_token.token_type != TokenType.R_BRACE:
+                statement = res.process(self.parse_statement())
+                if res.err: return res
+                if statement.ok is None:
+                    continue
+                nodes.append(statement.get_success())
+            pos_end = self.current_token.pos_end
+            self.advance()
+            return res.success(n.BlockNode(nodes, pos_start, pos_end))
+        else:
+            statement = res.process(self.parse_statement())
+            if res.err: return res
+            node = statement.get_success()
+            return res.success(n.BlockNode([node], node.pos_start, node.pos_end))
     def parse_statement(self) -> Result:
         res = Result()
         if self.current_token.match_keyword(KEYWORDS["declare_var"]):
@@ -55,10 +75,24 @@ class Parser:
                 value = value.get_success()
             else:
                 value = None
+            
+            if self.current_token.token_type != TokenType.SEMICOLON: 
+                return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
 
             return res.success(n.VarDeclareNode(variable, var_type, value, pos_start, self.current_token.pos_end)) # pyright: ignore[reportArgumentType]
+        elif self.current_token.token_type == TokenType.L_BRACE:
+            return self.parse_block()
+        elif self.current_token.token_type == TokenType.SEMICOLON:
+            self.advance()
+            return res
         else:
-            return self.parse_expression()
+            parse_res = res.process(self.parse_expression())
+            if res.err: return res
+            if self.current_token.token_type != TokenType.SEMICOLON: 
+                return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+            return parse_res
     def parse_expression(self) -> Result:
         return self.parse_equality_expr()
     def parse_equality_expr(self) -> Result:
@@ -150,17 +184,24 @@ class Parser:
             return res.error(Error("Expected expression", self.current_token.pos_start, self.current_token.pos_end))
         return res.error(Error("Unexpected token", self.current_token.pos_start, self.current_token.pos_end))
     ####
-    def parse_binary_operation(self, left_func: Callable, operator_tokentypes: list[TokenType], operators: list[Operator]) -> Result:
+    def parse_binary_operation(self, func: Callable, operator_tokentypes: list[TokenType], operators: list[Operator]) -> Result:
         res = Result()
         
-        left = res.process(left_func())
+        left = res.process(func())
         if res.err:
             return res
-        if self.current_token.token_type in operator_tokentypes:
+        if not self.current_token.token_type in operator_tokentypes: return left
+
+        node: n.BinaryOpNode | None = None
+        while self.current_token.token_type in operator_tokentypes:
             operator = operators[operator_tokentypes.index(self.current_token.token_type)]
             self.advance()
-            right = res.process(self.parse_binary_operation(left_func, operator_tokentypes, operators))
+            right = res.process(func())
             if res.err:
                 return res
-            return res.success(n.BinaryOpNode(left.get_success(), operator, right.get_success()))
-        return left
+            if node: 
+                node = n.BinaryOpNode(node, operator, right.get_success())
+                self.advance()
+            else:
+                node = n.BinaryOpNode(left.get_success(), operator, right.get_success())
+        return res.success(node)
