@@ -100,7 +100,7 @@ class Lexer:
                 return Result(None, Error(f"Expected \"'\"", pos_start, self.pos+1))
             self.advance()
             return Result(Token(TokenType.CHAR, char, pos_start, copy(self.pos)))
-        elif self.current_char in LETTERS:
+        elif self.current_char in LETTERS + "_":
             return self.gen_ident()
         return Result(None, Error(f"Unexpected character: {current_char!r}", pos_start, self.pos+1))
     
@@ -143,7 +143,7 @@ class Lexer:
     def gen_ident(self) -> Result:
         pos_start = copy(self.pos)
         text = ""
-        while self.current_char in ALPHANUMERIC:
+        while self.current_char in ALPHANUMERIC  +"_":
             text += self.current_char
             self.advance()
         
