@@ -3,7 +3,7 @@ from result import LexerResult as Result
 from pos import Position
 from copy import copy
 from error import Error
-from constants import LETTERS, KEYWORDS, TYPES
+from constants import LETTERS, KEYWORDS, TYPES, NUMBERS, ALPHANUMERIC
 
 class Lexer:
     token_table = {
@@ -30,6 +30,8 @@ class Lexer:
         ";": TokenType.SEMICOLON,
         "{": TokenType.L_BRACE,
         "}": TokenType.R_BRACE,
+        ",": TokenType.COMMA,
+        "->": TokenType.ARROW,
     }
     def __init__(self, text: str):
         self.text = text
@@ -74,7 +76,7 @@ class Lexer:
                 token_type = self.token_table[char + self.current_char]
                 self.advance()
             return Result(Token(token_type, None, pos_start, copy(self.pos)))
-        elif self.current_char in "0123456789.":
+        elif self.current_char in NUMBERS + ".":
             return self.gen_number()
         elif self.current_char in " \n\t":
             self.advance()
@@ -141,7 +143,7 @@ class Lexer:
     def gen_ident(self) -> Result:
         pos_start = copy(self.pos)
         text = ""
-        while self.current_char in LETTERS:
+        while self.current_char in ALPHANUMERIC:
             text += self.current_char
             self.advance()
         

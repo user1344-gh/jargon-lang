@@ -1,7 +1,7 @@
 # JargonLang
-Version 0.14.0 (2025/11/11)
+Version 0.15.0 (2025/11/13)
 
-File extension: .jl
+File extension: .jgl
 
 Contains a lexer and a parser.
 
@@ -34,6 +34,15 @@ var x: int = 5
 var x: float
 ```
 Used to declare a variable. The type is mandatory, but you dont have to assign a value.
+## `func`
+```
+func f(a: int, b: str) -> int { var x = 5; }
+Used to declare a function. You must specify the name, return type and the types of the arguments, but you dont have to add arguments.
+## `return`
+```
+return x;
+```
+Used to return a value from a function.
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html
@@ -46,7 +55,7 @@ Ignores text until the end of the line
 Ignores text until the end of the file or `*/`
 # Order of operations
 Highest priority first
-- Assignment (=)
+- Assignment (=) 
 - Unary operations (-, !, ~)
 - Multiplication and division (*, /)
 - Binary bitwise operations (|, &, ^)

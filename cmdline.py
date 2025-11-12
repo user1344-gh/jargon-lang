@@ -1,6 +1,7 @@
 import sys
 import lexer
 import parser
+import constants as c
 
 FLAG_LIST = {"-d"}
 OPTION_LIST = {}
@@ -14,7 +15,7 @@ def run(input_args: list[str]):
 
     input_args = sys.argv[1:]
     if input_args[0] == "-v" or input_args[0] == "--version":
-        print("Jargonlang v0.14.0 [2025-11-11]")
+        print(f"Jargonlang v{c.VERSION_MAJOR}.{c.VERSION_MINOR}.{c.VERSION_PATCH} [{c.RELEASE_YEAR}-{c.RELEASE_MONTH}-{c.RELEASE_DAY}]")
     else:
         args, flags, options = process(input_args)
         if len(args) == 0:

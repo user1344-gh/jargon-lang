@@ -6,6 +6,7 @@ from operators import Operator
 from typing import Callable
 from error import Error
 from constants import KEYWORDS, TYPES
+from types_ import Type
 
 class Parser:
     def __init__(self, tokens: list[Token]):
@@ -23,7 +24,7 @@ class Parser:
     def parse(self) -> Result:
         if len(self.tokens) == 1:
             return Result()
-        output = self.parse_block()
+        output = self.parse_top_level()
         if output.err:
             return output
         if self.index < len(self.tokens) - 1:
@@ -31,7 +32,22 @@ class Parser:
         return output
     
     # PARSING
-    
+    def parse_top_level(self) -> Result:
+        "Parses a list of statements outside of functions"
+        nodes = []
+        res = Result()
+        while self.current_token.token_type != TokenType.EOF:
+            statement = res.process(self.parse_top_level_statement())
+            if res.err: return res
+            nodes.append(statement.get_success())
+        return res.success(n.BlockNode(nodes, self.tokens[0].pos_start, self.tokens[-1].pos_end))
+    def parse_top_level_statement(self) -> Result:
+        "Parses a statement outside of any function"
+        res = Result()
+        if self.current_token.match_keyword(KEYWORDS["declare_func"]):
+            return self.parse_func_decl()
+        else:
+            return res.error(Error("Unexpected token.", self.current_token.pos_start, self.current_token.pos_end))
     def parse_block(self) -> Result:
         res = Result()
         if self.current_token.token_type == TokenType.L_BRACE:
@@ -86,6 +102,15 @@ class Parser:
         elif self.current_token.token_type == TokenType.SEMICOLON:
             self.advance()
             return res
+        elif self.current_token.match_keyword(KEYWORDS["return_value"]):
+            pos_start = self.current_token.pos_start
+            self.advance()
+            value = res.process(self.parse_expression())
+            if res.err: return res
+            if self.current_token.token_type != TokenType.SEMICOLON: 
+                return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
+            self.advance()
+            return res.success(n.ReturnNode(value.get_success() , pos_start))
         else:
             parse_res = res.process(self.parse_expression())
             if res.err: return res
@@ -181,6 +206,7 @@ class Parser:
                 return res.success(n.VarAssignNode(identifier.value, value.get_success(), identifier.pos_start))
             return res.success(n.VarNode(identifier))
         elif self.current_token.token_type == TokenType.EOF:
+            raise Exception()
             return res.error(Error("Expected expression", self.current_token.pos_start, self.current_token.pos_end))
         return res.error(Error("Unexpected token", self.current_token.pos_start, self.current_token.pos_end))
     ####
@@ -205,3 +231,53 @@ class Parser:
             else:
                 node = n.BinaryOpNode(left.get_success(), operator, right.get_success())
         return res.success(node)
+    ####
+    def parse_func_decl(self) -> Result:
+        res = Result()
+        pos_start = self.current_token.pos_start
+        self.advance()
+        if self.current_token.token_type == TokenType.IDENTIFIER:
+            func_name = self.current_token.value
+            self.advance()
+        else:
+            return res.error(Error("Expected identifier.", self.current_token.pos_start, self.current_token.pos_end))
+        if self.current_token.token_type != TokenType.L_PAREN:
+            return res.error(Error("Expected '('.", self.current_token.pos_start, self.current_token.pos_end))
+        self.advance()
+        args: dict[str, Type] = {}
+        while self.current_token.token_type != TokenType.R_PAREN:
+            if self.current_token.token_type != TokenType.IDENTIFIER: 
+                return res.error(
+                    Error("Expected identifier or ')'.", self.current_token.pos_start, self.current_token.pos_end)
+                )
+            arg_name = self.current_token.value
+            self.advance()
+            if self.current_token.token_type != TokenType.COLON: 
+                return res.error(
+                    Error("Expected ':'", self.current_token.pos_start, self.current_token.pos_end)
+                )
+            self.advance()
+            if self.current_token.token_type != TokenType.TYPE: 
+                return res.error(
+                    Error("Expected a type", self.current_token.pos_start, self.current_token.pos_end)
+                )
+            args[arg_name] = TYPES[self.current_token.value]
+            self.advance()
+            if self.current_token.token_type != TokenType.COMMA:
+                break
+            self.advance()
+            del arg_name
+        self.advance()
+        if self.current_token.token_type != TokenType.ARROW:
+            return res.error(Error("Expected '->'.", self.current_token.pos_start, self.current_token.pos_end))
+        self.advance()
+        if self.current_token.token_type != TokenType.TYPE: 
+            return res.error(
+                Error("Expected a type", self.current_token.pos_start, self.current_token.pos_end)
+            )
+        return_type = TYPES[self.current_token.value]
+        self.advance()
+        func_body = res.process(self.parse_block())
+        if res.err: return res
+        func_body = func_body.get_success()
+        return res.success(n.FuncDeclNode(func_name, args, return_type, func_body, pos_start, func_body.pos_end))

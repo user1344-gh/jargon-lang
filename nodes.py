@@ -105,3 +105,22 @@ class BlockNode(Node):
         self.pos_end = pos_end
     def __repr__(self):
         return f"(block: {self.nodes})"
+
+class FuncDeclNode(Node):
+    def __init__(self, name: str, args: dict[str, types_.Type], return_type: types_.Type, body: BlockNode, pos_start: pos.Position, pos_end: pos.Position):
+        self.name = name
+        self.args = args
+        self.return_type = return_type
+        self.body = body
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+    def __repr__(self):
+        return f"(function {self.name}({self.args})) -> {self.return_type} {self.body})"
+
+class ReturnNode(Node):
+    def __init__(self, value: Node, pos_start: pos.Position):
+        self.value = value
+        self.pos_start = pos_start
+        self.pos_end = value.pos_end
+    def __repr__(self):
+        return f"(return {self.value})"
