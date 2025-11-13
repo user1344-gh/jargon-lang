@@ -4,7 +4,7 @@ import parser
 import constants as c
 
 FLAG_LIST = {"-d"}
-OPTION_LIST = {}
+OPTION_LIST = set()
 
 def run(input_args: list[str]):
     if len(input_args) == 0:
@@ -24,6 +24,7 @@ def run(input_args: list[str]):
             raise ValueError("Too many arguments")
         with open(args[0], "r") as file:
             text = file.read()
+
         lexer_ = lexer.Lexer(text)
         lexer_res = lexer_.lex_text()
 

@@ -124,3 +124,12 @@ class ReturnNode(Node):
         self.pos_end = value.pos_end
     def __repr__(self):
         return f"(return {self.value})"
+
+class CallNode(Node):
+    def __init__(self, node: Node, arguments: list[Node], pos_end: pos.Position):
+        self.node = node
+        self.arguments = arguments
+        self.pos_end = pos_end
+        self.pos_start = node.pos_start
+    def __repr__(self):
+        return f"(call {self.node} {self.arguments})"

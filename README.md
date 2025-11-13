@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.15.0 (2025/11/13)
+Version 0.16.0 (2025/11/13)
 
 File extension: .jgl
 
@@ -24,7 +24,9 @@ Returns the additive inverse of `a`
 ## Assignment `a=b`
 Assigns the value `b` to variable `a`
 ## Code blocks `{}`
-Creates a block of multiple statements separated by semicolons. Required for multiline code as of version 0.14
+Creates a block of multiple statements separated by semicolons. 
+## Function calls `a(b, c)`
+Used to call function `a` with arguments in parentheses
 # Keywords
 ## `var`
 ```
@@ -56,6 +58,7 @@ Ignores text until the end of the file or `*/`
 # Order of operations
 Highest priority first
 - Assignment (=) 
+- Function calls (f())
 - Unary operations (-, !, ~)
 - Multiplication and division (*, /)
 - Binary bitwise operations (|, &, ^)

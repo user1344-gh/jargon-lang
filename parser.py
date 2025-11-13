@@ -158,7 +158,7 @@ class Parser:
         if self.current_token.token_type in (TokenType.MINUS, TokenType.TILDE, TokenType.EXCLAMATION):
             op_token = self.current_token
             self.advance()
-            value = res.process(self.parse_factor())
+            value = res.process(self.parse_func_call())
             if res.err:
                 return res
             return res.success(n.UnaryOpNode((
@@ -167,7 +167,28 @@ class Parser:
                 Operator.NEG
             ), value.get_success(), self.current_token.pos_start))
         
-        return self.parse_atom()
+        return self.parse_func_call()
+    def parse_func_call(self) -> Result:
+        res = Result()
+        value = res.process(self.parse_atom())
+        if res.err: return res
+        if self.current_token.token_type != TokenType.L_PAREN:
+            return value
+        self.advance()
+        args: list[n.Node] = []
+        while self.current_token.token_type != TokenType.R_PAREN:
+            arg = res.process(self.parse_expression())
+            if res.err: return res
+            args.append(arg.get_success())
+            if self.current_token.token_type == TokenType.COMMA:
+                self.advance()
+                continue
+            break
+        if self.current_token.token_type != TokenType.R_PAREN:
+            return res.error(Error("Expected ')'", self.current_token.pos_start, self.current_token.pos_end))
+        pos_end = self.current_token.pos_end
+        self.advance()
+        return res.success(n.CallNode(value.get_success(), args, pos_end))
     def parse_atom(self) -> Result:
         res = Result()
         
