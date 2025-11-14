@@ -111,6 +111,8 @@ class Parser:
                 return res.error(Error("Expected semicolon", self.current_token.pos_start, self.current_token.pos_end))
             self.advance()
             return res.success(n.ReturnNode(value.get_success() , pos_start))
+        elif self.current_token.match_keyword(KEYWORDS["condition_main"]):
+            return self.parse_conditional()
         else:
             parse_res = res.process(self.parse_expression())
             if res.err: return res
@@ -302,3 +304,31 @@ class Parser:
         if res.err: return res
         func_body = func_body.get_success()
         return res.success(n.FuncDeclNode(func_name, args, return_type, func_body, pos_start, func_body.pos_end))
+    def parse_conditional(self) -> Result:
+        res = Result()
+        pos_start = self.current_token.pos_start
+        self.advance()
+        condition = res.process(self.parse_expression())
+        if res.err: return res
+        block = res.process(self.parse_block())
+        if res.err: return res
+        block = block.get_success()
+        if self.current_token.match_keyword(KEYWORDS["condition_alt"]):
+            alt = res.process(self.parse_conditional())
+            if res.err: return res
+            alt_case: n.IfNode = alt.get_success()
+            alternate_cases: list[n.IfNode] = [alt_case] + alt_case.alternate_cases
+            if alt_case.failure:
+                failure = alt_case.failure
+            else:
+                failure = None
+            alternate_cases[0].strip()
+            return res.success(n.IfNode(condition.get_success(), block, alternate_cases, failure, pos_start, alt_case.pos_end))
+        elif self.current_token.match_keyword(KEYWORDS["condition_fail"]):
+            self.advance()
+            else_block = res.process(self.parse_block())
+            if res.err: return res
+            else_block = else_block.get_success()
+            return res.success(n.IfNode(condition.get_success(), block, [], else_block, pos_start, else_block.pos_end))
+        else:
+            return res.success(n.IfNode(condition.get_success(), block, [], None, pos_start, block.pos_end))

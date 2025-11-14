@@ -29,14 +29,14 @@ def run(input_args: list[str]):
         lexer_res = lexer_.lex_text()
 
         if lexer_res[1]:
-            print(lexer_res[1].display(lexer_.text), file=sys.stderr, sep="")
+            print(lexer_res[1].display(lexer_.text, args[0]), file=sys.stderr, sep="")
             exit()
         if "-d" in flags:
             print("LEXER OUTPUT:", lexer_res[0])
         parser_ = parser.Parser(lexer_res[0])
         parser_res = parser_.parse()
         if parser_res.err:
-            print(parser_res.err.display(text), file=sys.stderr, sep="")
+            print(parser_res.err.display(text, args[0]), file=sys.stderr, sep="")
             sys.exit()
         if "-d" in flags:
             print("PARSER OUTPUT:", parser_res.ok)

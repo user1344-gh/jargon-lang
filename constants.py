@@ -8,6 +8,9 @@ KEYWORDS: dict[str, str] = {
     "declare_var": "var",
     "declare_func": "func",
     "return_value": "return",
+    "condition_main": "if",
+    "condition_alt": "elseif",
+    "condition_fail": "else",
 }
 TYPES: dict[str, _Type] = {
     "int": _Type.INT,
@@ -17,9 +20,9 @@ TYPES: dict[str, _Type] = {
 }
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 16
+VERSION_MINOR = 17
 VERSION_PATCH = 0
 
 RELEASE_YEAR  = 2025
 RELEASE_MONTH = 11
-RELEASE_DAY   = 13
+RELEASE_DAY   = 15

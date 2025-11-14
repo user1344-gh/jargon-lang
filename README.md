@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.16.0 (2025/11/13)
+Version 0.17.0 (2025/11/15)
 
 File extension: .jgl
 
@@ -45,6 +45,21 @@ Used to declare a function. You must specify the name, return type and the types
 return x;
 ```
 Used to return a value from a function.
+## `if`
+```if (cond) { code; }```
+Used for conditional statements.\ If `cond` is true, `code` is executed
+## `elseif`
+``` 
+if (cond1) { code1; }
+elseif (con2) { code2; }
+If all previous conditions are false, and `cond2` is true, `code2` is executed
+## `else`
+```
+if (cond1) {code; }
+elseif (cond2) {code; }
+else {code2}
+```
+Executes code2 if all previous conditions are false
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html

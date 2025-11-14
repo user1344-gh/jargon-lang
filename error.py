@@ -12,9 +12,9 @@ class Error:
     def __str__(self):
         return f"Error: {self.value}"
     
-    def display(self, text: str) -> str:
+    def display(self, text: str, filename: str) -> str:
         disp_text: str = (
-            f"Error at line {self.pos_start.line + 1}, col {self.pos_start.col + 1}:\n"
+            f"Error at line {self.pos_start.line + 1}, col {self.pos_start.col + 1} ({filename}:{self.pos_start.line+1}:{self.pos_start.col+1}):\n"
             f"{self.value}\n"
         )
         line_text = text.split("\n")[self.pos_start.line]

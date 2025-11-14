@@ -61,4 +61,4 @@ class Result:
 class ParseResult(Result):
     def __init__(self):
         self.ok: None | nodes.Node = None
-        self.err = None
+        self.err: None | error.Error = None

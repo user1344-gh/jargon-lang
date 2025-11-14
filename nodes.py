@@ -133,3 +133,22 @@ class CallNode(Node):
         self.pos_start = node.pos_start
     def __repr__(self):
         return f"(call {self.node} {self.arguments})"
+
+class IfNode(Node):
+    def __init__(self, condition: Node, success: Node, alternate_cases, failure: BlockNode | None, pos_start, pos_end):
+        self.condition = condition
+        self.success = success
+        self.alternate_cases: list[IfNode] = alternate_cases
+        self.failure = failure
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+    def __repr__(self):
+        return (
+            f"(if {self.condition} {self.success}"
+            + (f" alt {self.alternate_cases}" if self.alternate_cases else "")
+            + (f" else {self.failure}" if self.failure else "")
+            + ")"
+        )
+    def strip(self):
+        self.alternate_cases = []
+        self.failure = None
