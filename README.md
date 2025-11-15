@@ -1,11 +1,11 @@
 # JargonLang
-Version 0.18.0 (2025/11/15)
+Version 0.18.0 (2025/11/15) 
 
 File extension: .jgl
 
-Contains a lexer and a parser.
+Contains a lexer and a parser 
 
-Types: int, float, str, char
+types: int, float, str, char
 # Operations: 
 ## Addition `a+b`
 Adds `a` and `b`

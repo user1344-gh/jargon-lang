@@ -62,7 +62,7 @@ class Lexer:
             self.tokens.append(token)
             if token.token_type == TokenType.EOF: 
                 break
-        return (self.tokens, None)
+        return (self.tokens, None) 
     
     def gen_token(self) -> Result:
         "Generates a token from the current character and advances as necessary."
