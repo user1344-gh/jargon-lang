@@ -113,6 +113,14 @@ class Parser:
             return res.success(n.ReturnNode(value.get_success() , pos_start))
         elif self.current_token.match_keyword(KEYWORDS["condition_main"]):
             return self.parse_conditional()
+        elif self.current_token.match_keyword(KEYWORDS["loop_condition"]):
+            pos_start = self.current_token.pos_start
+            self.advance()
+            condition = res.process(self.parse_expression())
+            if res.err: return res
+            block = res.process(self.parse_block())
+            if res.err: return res
+            return res.success(n.WhileNode(condition.get_success(), block.get_success(), pos_start))
         else:
             parse_res = res.process(self.parse_expression())
             if res.err: return res

@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.17.0 (2025/11/15)
+Version 0.18.0 (2025/11/15)
 
 File extension: .jgl
 
@@ -53,6 +53,8 @@ Used for conditional statements.\ If `cond` is true, `code` is executed
 if (cond1) { code1; }
 elseif (con2) { code2; }
 If all previous conditions are false, and `cond2` is true, `code2` is executed
+```while (cond) { code; }```
+Used for conditional loops.\ `code` gets repeated as long as `cond` is true
 ## `else`
 ```
 if (cond1) {code; }

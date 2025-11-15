@@ -29,6 +29,7 @@ def run(input_args: list[str]):
         lexer_res = lexer_.lex_text()
 
         if lexer_res[1]:
+            if "-d" in flags: print("LEXER ERROR")
             print(lexer_res[1].display(lexer_.text, args[0]), file=sys.stderr, sep="")
             exit()
         if "-d" in flags:
@@ -36,6 +37,7 @@ def run(input_args: list[str]):
         parser_ = parser.Parser(lexer_res[0])
         parser_res = parser_.parse()
         if parser_res.err:
+            if "-d" in flags: print("PARSER ERROR")
             print(parser_res.err.display(text, args[0]), file=sys.stderr, sep="")
             sys.exit()
         if "-d" in flags:

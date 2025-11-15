@@ -17,7 +17,7 @@ class IntNode(Node):
         self.value = token.value
 
     def __repr__(self):
-        return f"({type(self).__name__}({self.value}))"
+        return f"(int {self.value})"
 
 class FloatNode(Node):
     def __init__(self, token: tokens.Token):
@@ -26,7 +26,7 @@ class FloatNode(Node):
         self.value = token.value
 
     def __repr__(self):
-        return f"({type(self).__name__}({self.value}))"
+        return f"(float {self.value})"
 
 class StringNode(Node):
     def __init__(self, token: tokens.Token):
@@ -35,7 +35,7 @@ class StringNode(Node):
         self.value = token.value
 
     def __repr__(self):
-        return f"({type(self).__name__}({self.value}))"
+        return f"(str {self.value})"
 
 class BinaryOpNode(Node):
     "Used for binary operations"
@@ -67,7 +67,7 @@ class CharNode(Node):
         self.value = token.value
 
     def __repr__(self):
-        return f"({type(self).__name__}({self.value}))"
+        return f"(char {self.value})"
 
 class VarNode(Node):
     def __init__(self, token: tokens.Token):
@@ -75,7 +75,7 @@ class VarNode(Node):
         self.pos_start = token.pos_start
         self.pos_end = token.pos_end
     def __repr__(self):
-        return f"({self.var_name})"
+        return f"(var {self.var_name})"
 
 class VarAssignNode(Node):
     def __init__(self, var_name: str, value: Node, pos_start: pos.Position):
@@ -84,7 +84,7 @@ class VarAssignNode(Node):
         self.pos_start = pos_start
         self.pos_end = value.pos_end
     def __repr__(self):
-        return f"({self.var_name} = {self.value})"
+        return f"(set {self.var_name} = {self.value})"
 
 class VarDeclareNode(Node):
     def __init__(self, var_name: str, var_type: types_.Type, value: Node | None, pos_start: pos.Position, pos_end = pos.Position):
@@ -152,3 +152,18 @@ class IfNode(Node):
     def strip(self):
         self.alternate_cases = []
         self.failure = None
+
+class WhileNode(Node):
+    def __init__(self, condition: Node, block: Node, pos_start: pos.Position):
+        self.condition = condition
+        self.block = block
+        self.pos_start = pos_start
+        self.pos_end = block.pos_end
+    def __repr__(self):
+        return (
+            f"(while {self.condition} {self.block})"
+        )
+    def strip(self):
+        self.alternate_cases = []
+        self.failure = None
+

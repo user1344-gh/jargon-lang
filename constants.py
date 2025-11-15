@@ -11,6 +11,7 @@ KEYWORDS: dict[str, str] = {
     "condition_main": "if",
     "condition_alt": "elseif",
     "condition_fail": "else",
+    "loop_condition": "while",
 }
 TYPES: dict[str, _Type] = {
     "int": _Type.INT,
@@ -20,7 +21,7 @@ TYPES: dict[str, _Type] = {
 }
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 17
+VERSION_MINOR = 18
 VERSION_PATCH = 0
 
 RELEASE_YEAR  = 2025
