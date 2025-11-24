@@ -144,10 +144,10 @@ class IfNode(Node):
         self.pos_end = pos_end
     def __repr__(self):
         return (
-            f"(if {self.condition} {self.success}"
+            f"[if {self.condition} {self.success}"
             + (f" alt {self.alternate_cases}" if self.alternate_cases else "")
             + (f" else {self.failure}" if self.failure else "")
-            + ")"
+            + "]"
         )
     def strip(self):
         self.alternate_cases = []
@@ -161,9 +161,24 @@ class WhileNode(Node):
         self.pos_end = block.pos_end
     def __repr__(self):
         return (
-            f"(while {self.condition} {self.block})"
+            f"[while {self.condition} {self.block}]"
         )
-    def strip(self):
-        self.alternate_cases = []
-        self.failure = None
+
+class ContinueNode(Node):
+    def __init__(self, pos_start: pos.Position, pos_end: pos.Position):
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+    def __repr__(self):
+        return (
+            f"[continue]"
+        )
+
+class BreakNode(Node):
+    def __init__(self, pos_start: pos.Position, pos_end: pos.Position):
+        self.pos_start = pos_start
+        self.pos_end = pos_end
+    def __repr__(self):
+        return (
+            f"[break]"
+        )
 

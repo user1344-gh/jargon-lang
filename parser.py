@@ -13,6 +13,7 @@ class Parser:
         self.tokens = tokens
         self.index = -1
         self.current_token: Token = self.advance()
+        self.loops_inside: int = 0 # Number of loops the code is currently in
     def advance(self, amount: int = 1):
         self.index += amount
         if self.index >= len(self.tokens):
@@ -118,9 +119,23 @@ class Parser:
             self.advance()
             condition = res.process(self.parse_expression())
             if res.err: return res
+            self.loops_inside += 1
             block = res.process(self.parse_block())
+            self.loops_inside -= 1
             if res.err: return res
             return res.success(n.WhileNode(condition.get_success(), block.get_success(), pos_start))
+        elif self.current_token.match_keyword(KEYWORDS["control_next"]):
+            if self.loops_inside == 0:
+                return res.err(Error("Must be in loop", self.current_token.pos_start, self.current_token.pos_end))
+            token = self.current_token
+            self.advance()
+            return res.success(n.ContinueNode(token.pos_start, token.pos_end))
+        elif self.current_token.match_keyword(KEYWORDS["control_end"]):
+            if self.loops_inside == 0:
+                return res.error(Error("Must be in loop", self.current_token.pos_start, self.current_token.pos_end))
+            token = self.current_token
+            self.advance()
+            return res.success(n.BreakNode(token.pos_start, token.pos_end))
         else:
             parse_res = res.process(self.parse_expression())
             if res.err: return res

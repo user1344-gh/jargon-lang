@@ -1,5 +1,5 @@
 # JargonLang
-Version 0.18.0 (2025/11/15) 
+Version 0.19.0 (2025/11/24) 
 
 File extension: .jgl
 
@@ -55,13 +55,19 @@ elseif (con2) { code2; }
 If all previous conditions are false, and `cond2` is true, `code2` is executed
 ```while (cond) { code; }```
 Used for conditional loops.\ `code` gets repeated as long as `cond` is true
-## `else`
+## `else` 
 ```
 if (cond1) {code; }
 elseif (cond2) {code; }
 else {code2}
 ```
 Executes code2 if all previous conditions are false
+## `continue`
+``` while (cond) continue;```
+Control statement used in loops to skip the code after and enter the next iteration of the loop
+## `break`
+```while (cond) break;```
+Control statement used to end a loop
 # Misc
 ## Parentheses `(a)`
 https://study.com/learn/lesson/parentheses-math-rules-examples.html
